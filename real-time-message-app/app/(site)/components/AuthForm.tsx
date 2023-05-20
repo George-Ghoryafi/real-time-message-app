@@ -47,11 +47,13 @@ const AuthForm = () => {
         if (variant === 'REGISTER') {
         }
 
-        const socialAction = (action: string) => {
+        
+    }
+
+    const socialAction = (action: string) => {
             setIsLoading(true);
 
         }
-    }
 
     return (
         <div className='mt-8 sm:mx-auto w-full sm:max-w-md'>
