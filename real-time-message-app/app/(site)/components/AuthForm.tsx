@@ -10,6 +10,8 @@ import Input from "@/app/components/inputs/input";
 import Button from "@/app/components/Button";
 import AuthSocialButton from "./AuthSocialButton";
 
+import {toast} from 'react-hot-toast';
+
 type Variant = 'LOGIN' | 'REGISTER';
 
 const AuthForm = () => {
@@ -41,61 +43,97 @@ const AuthForm = () => {
 
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setIsLoading(true);
+
         if (variant === 'LOGIN') {
+            signIn('credentials', {
+                ...data, 
+                redirect: false,
+
+            })
+            .then((callback) => {
+                if (callback?.error) {
+                    toast.error('Something went wrong!');
+                }
+                else if(callback?.ok){
+                    toast.success('Success')
+                }
+            })
+            .finally(() => setIsLoading(false));
         }
         
         if (variant === 'REGISTER') {
+            axios.post('/api/register', data)
+            .catch(() => toast.error('Something went wrong!'))
+            .finally(() => setIsLoading(false));
         }
 
-        
     }
 
     const socialAction = (action: string) => {
             setIsLoading(true);
 
+            signIn(action, {redirect:false})
+            .then((callback) => { 
+                if (callback?.error) {
+                    toast.error('Something went wrong!');
+                }
+                else if(callback?.ok){
+                    toast.success('Success')
+                }
+            })
+            .finally(() => setIsLoading(false));
         }
 
     return (
         <div className='mt-8 sm:mx-auto w-full sm:max-w-md'>
             <div className='bg-white px-4 py-8 shadow sm:rounded-lg sm:px-10'>
-                <form className='space-y-6' onSubmit={handleSubmit(onSubmit)}> {/* HandleSubmit allows us to collect the data from the submit function once it has been called */}
+                <form 
+                className='space-y-6' 
+                onSubmit={handleSubmit(onSubmit)}> 
+                {/* HandleSubmit allows us to collect the data from the submit function once it has been called */}
                     {variant === 'REGISTER' && (
                         <Input 
-                            id="name" 
-                            label="Name" 
                             register={register}
                             error={errors}
                             disabled={isLoading}
+                            required
+                            id="name" 
+                            label="Name" 
+                            
                         />                    
                     )}
                     <Input 
+                        register={register}
+                        error={errors}
+                        disabled={isLoading}
+                        required
                         id="email"
                         label="Email"
                         type="email" 
+                        
+                    />
+                    <Input 
                         register={register}
                         error={errors}
                         disabled={isLoading}
-                    />
-                    <Input 
+                        required
                         id="password"
                         label="Password"
                         type="password" 
-                        register={register}
-                        error={errors}
-                        disabled={isLoading}
+                        
                     />
                     
                     <div>
                         <Button
                             type="submit"
-                            disabled={isLoading}
                             fullWidth
+                            disabled={isLoading}
                         >
                             {variant === 'LOGIN' ? 'Login' : 'Register'} {/** If the variant is login, then the button will say login, otherwise it will say register */}
-
                         </Button>
                     </div>
                 </form>
+
                 <div className='mt-6'>
                     <div className='relative'>
                         <div className='absolute inset-0 flex items-center'>
