@@ -36,15 +36,15 @@ model Account {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   userId    String   @db.ObjectId
   type      String
-  provider  String
-  providerAccountId String
+  provider  String 
+  providerAccountId String @unique @db.String
   refreshToken String? @db.String
   accessToken String? @db.String
-  expiresAt Int?
-  token_type String?
-  scope String?
+  expiresAt Int? @db.Int
+  token_type String? @db.String
+  scope String? @db.String
   id_token String? @db.String
-  session_state String?
+  session_state String? @db.String
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
